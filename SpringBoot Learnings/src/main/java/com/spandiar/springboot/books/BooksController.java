@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spandiar.springboot.model.BookModel;
+import com.spandiar.springboot.model.BookSimplifiedModel;
 
 @RestController
 public class BooksController {
@@ -31,9 +32,10 @@ public class BooksController {
 	
 	
 	@RequestMapping("/library/books/{bookId}")
-	public BookModel getBookById(@PathVariable("bookId") int bookId) {
+	public BookSimplifiedModel getBookById(@PathVariable("bookId") int bookId) {
 		
-		return bookService.getBookById(bookId);
+		//return bookService.getBookById(bookId);
+		return bookService.testMyBatis(bookId);
 	}
 	
 	@GetMapping("/library/books")

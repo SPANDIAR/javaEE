@@ -12,8 +12,11 @@ import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.spandiar.springboot.books.mybatis.BookMapper;
 import com.spandiar.springboot.model.BookModel;
 import com.spandiar.springboot.model.BookModel.BookAttributes;
+import com.spandiar.springboot.model.BookSimplifiedModel;
 
 @Service
 public class BookService {
@@ -23,6 +26,8 @@ public class BookService {
 	private bookRepository bookRepository;
 	@PersistenceContext
 	private EntityManager entityManager;
+	@Autowired
+	private BookMapper iBatisHandle;
 	
 	public BookService() {
 		
@@ -83,6 +88,10 @@ public class BookService {
 
 	private int nextBookId() {
 		return (this.getAllBooks().size() + 1);
+	}
+	
+	public BookSimplifiedModel testMyBatis(int bookId) {
+		return iBatisHandle.selectOne(bookId);
 	}
 	
 }
