@@ -31,7 +31,7 @@ public class BooksController {
 	}*/
 	
 	
-	@RequestMapping("/library/books/{bookId}")
+	@RequestMapping(method=RequestMethod.GET, value="/library/books/{bookId}")
 	public BookSimplifiedModel getBookById(@PathVariable("bookId") int bookId) {
 		
 		//return bookService.getBookById(bookId);
@@ -39,7 +39,7 @@ public class BooksController {
 	}
 	
 	@GetMapping("/library/books")
-	public List<BookModel> getAllBooks(@RequestParam("langCd") Optional<String> langCd, @RequestParam("author") Optional<String> author) {
+	public List<BookModel> getAllBooks(@RequestParam("langCd") Optional<String> langCd, @RequestParam("author") Optional<String> author, @RequestParam("bookName") Optional<String> bookName) {
 
 		if (langCd.isPresent()) {
 			System.out.print("Language Code is " + langCd.get());
@@ -49,6 +49,11 @@ public class BooksController {
 			System.out.print("Author is " + author.get());
 			return bookService.getBooksByAuthor(author.get());
 		}
+		else if (bookName.isPresent()) {
+			
+			System.out.println("Book Name passed is: " + bookName.get());
+			return bookService.getBooksByName(bookName.get());
+		}
 		else {
 			return bookService.getAllBooks();
 		}
@@ -56,6 +61,14 @@ public class BooksController {
 	
 	public void searchBooksByTitle() {
 		
+	}
+	
+	@RequestMapping(method=RequestMethod.PUT, value="/library/books/{bookId}")
+	public String updateBookDetails(@PathVariable("bookId") int bookId, @RequestBody BookModel updatedBook) {
+		if (bookId == updatedBook.getBookId()) {
+		return bookService.updateBookDetails(updatedBook);
+		} else 
+			return "BookId does not match with message";
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/library/books")

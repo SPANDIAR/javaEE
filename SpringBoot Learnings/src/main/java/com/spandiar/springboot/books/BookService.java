@@ -27,7 +27,7 @@ public class BookService {
 	@PersistenceContext
 	private EntityManager entityManager;
 	@Autowired
-	private BookMapper iBatisHandle;
+	private BookMapper myBatisHandle;
 	
 	public BookService() {
 		
@@ -57,6 +57,36 @@ public class BookService {
 		
 		return bookRepository.findByAuthorIgnoreCaseContaining(author);
 		
+	}
+	
+	public List<BookModel> getBooksByName(String bookName) {
+		
+		return bookRepository.findByNameIgnoreCaseContaining(bookName);
+		
+	}
+	
+	public String updateBookDetails(BookModel updateBookDetail) {
+		
+		if(null != updateBookDetail) {
+			updateBookDetail.setCreatedDate(new Date());
+			updateBookDetail.setModifiedDate(new Date());
+			List<BookAttributes> bookAttributes = updateBookDetail.getBookAttributes();
+			Iterator<BookAttributes> iterator = bookAttributes.iterator();
+			int i=1;
+			while(iterator.hasNext()) {
+				BookAttributes next = iterator.next();
+				next.setBookId(updateBookDetail.getBookId());
+				next.setAttributeId(i);
+				next.setCreatedDate(new Date());
+				next.setModifiedDate(new Date());
+				i++;
+			}
+			bookRepository.save(updateBookDetail);
+			return "Book details are updated";
+		} else
+		{
+			return "Error";
+		}
 	}
 
 	
@@ -91,7 +121,8 @@ public class BookService {
 	}
 	
 	public BookSimplifiedModel testMyBatis(int bookId) {
-		return iBatisHandle.selectOne(bookId);
+		//return myBatisHandle.selectOne(bookId);
+		return myBatisHandle.BookWithGenre(bookId);
 	}
 	
 }

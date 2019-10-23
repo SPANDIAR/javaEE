@@ -9,5 +9,6 @@ import com.spandiar.springboot.model.BookModel;
 public interface bookRepository extends CrudRepository<BookModel, Integer>{
 	
 	public List<BookModel> findByAuthorIgnoreCaseContaining(String author);
+	public List<BookModel> findByNameIgnoreCaseContaining(String bookName);
 
 }

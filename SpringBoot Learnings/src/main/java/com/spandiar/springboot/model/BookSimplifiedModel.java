@@ -1,5 +1,7 @@
 package com.spandiar.springboot.model;
 
+import java.util.List;
+
 public class BookSimplifiedModel {
 	
 	private int bookId;
@@ -9,6 +11,7 @@ public class BookSimplifiedModel {
 	private String publisher;
 	private int year;
 	private int volume;
+	private List<BookAttributesSimplified> bookGenreType;
 
 	public BookSimplifiedModel() {
 		// TODO Auto-generated constructor stub
@@ -68,6 +71,34 @@ public class BookSimplifiedModel {
 
 	public void setVolume(int volume) {
 		this.volume = volume;
+	}
+	
+	
+	public List<BookAttributesSimplified> getBookGenreType() {
+		return bookGenreType;
+	}
+
+	public void setBookGenreType(List<BookAttributesSimplified> bookGenreType) {
+		this.bookGenreType = bookGenreType;
+	}
+
+	public static class BookAttributesSimplified {
+		
+		private String bookGenre;
+		
+
+		public BookAttributesSimplified() {
+			
+		}
+
+		public String getBookGenre() {
+			return bookGenre;
+		}
+
+		public void setBookGenre(String bookGenre) {
+			this.bookGenre = bookGenre;
+		}
+		
 	}
 	
 }
