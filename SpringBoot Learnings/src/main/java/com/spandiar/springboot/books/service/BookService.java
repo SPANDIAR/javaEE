@@ -146,7 +146,7 @@ public class BookService {
 			// invoke GoodReads and get description and rating
 			GoodReadsBookDetails goodBookDetailsUsingIsbn = goodBooksClientHandle.getGoodBookDetailsUsingIsbn(bookWithGenre.getIsbn());
 			if (goodBookDetailsUsingIsbn != null) {
-				bookWithGenre.setBookRating(Float.valueOf(goodBookDetailsUsingIsbn.getGoodReadsResponse().getBook().getRating()));
+				bookWithGenre.setBookRating(Float.valueOf(goodBookDetailsUsingIsbn.getBook().getRating()));
 			}
 		}
 		return bookWithGenre;

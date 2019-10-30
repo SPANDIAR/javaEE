@@ -7,26 +7,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @XmlRootElement(name="GoodreadsResponse")
-//@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class GoodReadsBookDetails {
 	
-	private GoodReadsResponse goodReadsResponse;
-	
-	@JsonIgnoreProperties(ignoreUnknown=true)
-	@XmlAccessorType(XmlAccessType.FIELD)
-	public static class GoodReadsResponse {
-		
+		@XmlElement(name="book")
 		private GoodReadsBook book;
 		
 		@JsonIgnoreProperties(ignoreUnknown=true)
 		@XmlAccessorType(XmlAccessType.FIELD)
 		public static class GoodReadsBook {
 			
+			@XmlElement(name="id")
 			private String id;
+			@XmlElement(name="title")
 			private String title;
 			//private String description;
+			@XmlElement(name="average_rating")
 			private String rating;
 			
 			public GoodReadsBook() {
@@ -34,7 +31,7 @@ public class GoodReadsBookDetails {
 				// TODO Auto-generated constructor stub
 			}
 			
-			@XmlElement(name="id")
+			
 			public String getId() {
 				return id;
 			}
@@ -42,7 +39,7 @@ public class GoodReadsBookDetails {
 				this.id = id;
 			}
 			
-			@XmlElement(name="title")
+			
 			public String getTitle() {
 				return title;
 			}
@@ -58,7 +55,7 @@ public class GoodReadsBookDetails {
 				this.description = description;
 			}*/
 			
-			@XmlElement(name="average_rating")
+			
 			public String getRating() {
 				return rating;
 			}
@@ -68,36 +65,19 @@ public class GoodReadsBookDetails {
 			}
 			
 		}
-		
-		public GoodReadsResponse() {
-			super();
-			// TODO Auto-generated constructor stub
-		}
-		
-		@XmlElement(name="book")
-		public GoodReadsBook getBook() {
-			return book;
-		}
-
-		public void setBook(GoodReadsBook book) {
-			this.book = book;
-		}
-		
-	}
 	
 	public GoodReadsBookDetails() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	@XmlElement(name="GoodreadsResponse")
-	public GoodReadsResponse getGoodReadsResponse() {
-		return goodReadsResponse;
+	
+	public GoodReadsBook getBook() {
+		return book;
 	}
 
-	public void setGoodReadsResponse(GoodReadsResponse goodReadsResponse) {
-		this.goodReadsResponse = goodReadsResponse;
+	public void setBook(GoodReadsBook book) {
+		this.book = book;
 	}
 	
-
 }
