@@ -23,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.spandiar.springboot.model.BookAttributeKeys;
+
 
 @Entity
 @Table(name="books")
@@ -62,7 +64,7 @@ public class BookModel {
 		private int bookId;
 		@Id
 		@Column (name="attributeid")
-		@JsonIgnore
+		//@JsonIgnore
 		private int attributeId;
 		private String genre;
 		@ManyToOne

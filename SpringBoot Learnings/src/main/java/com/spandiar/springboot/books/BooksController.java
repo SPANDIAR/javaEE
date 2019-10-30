@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spandiar.springboot.model.BookModel;
+import com.spandiar.springboot.books.service.BookService;
 import com.spandiar.springboot.model.BookSimplifiedModel;
+import com.spandiar.springboot.model.Library;
+
 
 @RestController
 public class BooksController {
@@ -24,11 +26,11 @@ public class BooksController {
 	public BooksController() {
 	}
 	
-/*	//@RequestMapping("/library/books")
+	//@RequestMapping("/library/books")
 	@GetMapping("/library/books")
-	public List<BookModel> getAllBooks() {
+	public Library getAllBooks() {
 		return bookService.getAllBooks();
-	}*/
+	}
 	
 	
 	@RequestMapping(method=RequestMethod.GET, value="/library/books/{bookId}")
@@ -38,8 +40,8 @@ public class BooksController {
 		return bookService.testMyBatis(bookId);
 	}
 	
-	@GetMapping("/library/books")
-	public List<BookModel> getAllBooks(@RequestParam("langCd") Optional<String> langCd, @RequestParam("author") Optional<String> author, @RequestParam("bookName") Optional<String> bookName) {
+/*	@GetMapping("/library/books")
+	public Library getAllBooks(@RequestParam("langCd") Optional<String> langCd, @RequestParam("author") Optional<String> author, @RequestParam("bookName") Optional<String> bookName) {
 
 		if (langCd.isPresent()) {
 			System.out.print("Language Code is " + langCd.get());
@@ -57,23 +59,24 @@ public class BooksController {
 		else {
 			return bookService.getAllBooks();
 		}
-	}
+		
+	}*/
 	
 	public void searchBooksByTitle() {
 		
 	}
 	
-	@RequestMapping(method=RequestMethod.PUT, value="/library/books/{bookId}")
+/*	@RequestMapping(method=RequestMethod.PUT, value="/library/books/{bookId}")
 	public String updateBookDetails(@PathVariable("bookId") int bookId, @RequestBody BookModel updatedBook) {
 		if (bookId == updatedBook.getBookId()) {
 		return bookService.updateBookDetails(updatedBook);
 		} else 
 			return "BookId does not match with message";
-	}
+	}*/
 	
-	@RequestMapping(method=RequestMethod.POST, value="/library/books")
+/*	@RequestMapping(method=RequestMethod.POST, value="/library/books")
 	public int addBook(@RequestBody BookModel bookToAdd) {
 		return (bookService.addBooksToLibrary(bookToAdd));
-	}
+	}*/
 
 }

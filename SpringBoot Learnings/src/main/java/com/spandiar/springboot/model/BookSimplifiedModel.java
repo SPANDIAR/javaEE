@@ -11,7 +11,10 @@ public class BookSimplifiedModel {
 	private String publisher;
 	private int year;
 	private int volume;
-	private List<BookAttributesSimplified> bookGenreType;
+	private String isbn;
+	private String bookSnippet;
+	private float bookRating;
+	private List<BookAttributesSimplified> bookAttributes;
 
 	public BookSimplifiedModel() {
 		// TODO Auto-generated constructor stub
@@ -74,22 +77,58 @@ public class BookSimplifiedModel {
 	}
 	
 	
-	public List<BookAttributesSimplified> getBookGenreType() {
-		return bookGenreType;
+
+	public String getIsbn() {
+		return isbn;
 	}
 
-	public void setBookGenreType(List<BookAttributesSimplified> bookGenreType) {
-		this.bookGenreType = bookGenreType;
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public String getBookSnippet() {
+		return bookSnippet;
+	}
+
+	public void setBookSnippet(String bookSnippet) {
+		this.bookSnippet = bookSnippet;
+	}
+
+	public float getBookRating() {
+		return bookRating;
+	}
+
+	public void setBookRating(float bookRating) {
+		this.bookRating = bookRating;
+	}
+
+	public List<BookAttributesSimplified> getBookAttributes() {
+		return bookAttributes;
+	}
+
+	public void setBookAttributes(List<BookAttributesSimplified> bookAttributes) {
+		this.bookAttributes = bookAttributes;
 	}
 
 	public static class BookAttributesSimplified {
 		
+		private int attributeId;
 		private String bookGenre;
-		
 
 		public BookAttributesSimplified() {
 			
 		}
+	
+		
+		public int getAttributeId() {
+			return attributeId;
+		}
+
+
+		public void setAttributeId(int attributeId) {
+			this.attributeId = attributeId;
+		}
+
 
 		public String getBookGenre() {
 			return bookGenre;

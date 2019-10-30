@@ -1,4 +1,4 @@
-package com.spandiar.springboot.books;
+package com.spandiar.springboot.books.service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,57 +15,74 @@ import org.springframework.stereotype.Service;
 
 import com.spandiar.springboot.books.mybatis.BookMapper;
 import com.spandiar.springboot.model.BookModel;
-import com.spandiar.springboot.model.BookModel.BookAttributes;
 import com.spandiar.springboot.model.BookSimplifiedModel;
+import com.spandiar.springboot.model.GoodReadsBookDetails;
+import com.spandiar.springboot.model.Library;
+
+
 
 @Service
 public class BookService {
 	
+	private static final String AUTHOR="A.AUTHOR";
+	private static final String LANGUAGE="A.LANGUAGE";
+	private static final String BOOKNAME="A.BOOKNAME";
+	
 	private List<BookModel> allBooks;
-	@Autowired
+/*	@Autowired
 	private bookRepository bookRepository;
 	@PersistenceContext
-	private EntityManager entityManager;
+	private EntityManager entityManager;*/
 	@Autowired
 	private BookMapper myBatisHandle;
+	@Autowired
+	private GoodBooksService goodBooksClientHandle;
 	
 	public BookService() {
 		
 	}
 
-	public List<BookModel> getAllBooks() {
-		 Iterator<BookModel> bookIterator = bookRepository.findAll().iterator();
+	public Library getAllBooks() {
+		/* Iterator<BookModel> bookIterator = bookRepository.findAll().iterator();
 		 allBooks = new ArrayList<BookModel>();
 		 while(bookIterator.hasNext()) {
 			 allBooks.add(bookIterator.next());
 		 }
-		 return allBooks;
+		 return allBooks;*/
+		return myBatisHandle.AllBooks();
 	}
 	
-	public List<BookModel> getBooksByLanguage(String langCd){
+/*	public Library getBooksByLanguage(String langCd){
 		String sqlBooksByLang = "select id, bookname, author, language, publisher, year, volume, isbn, createddate, modifieddate from Books b where b.language=:langCd";
 		Query selectBooksByLang = entityManager.createNativeQuery(sqlBooksByLang, BookModel.class).setParameter("langCd", langCd);
 		List<BookModel> resultList = selectBooksByLang.getResultList();
 		return resultList;
-	}
+		
+		langCd='%'+langCd+'%';
+		return myBatisHandle.QueryParamSearch(LANGUAGE, langCd);
+	}*/
 	
-	public List<BookModel> getBooksByAuthor(String author) {
-		/*String sqlBooksByAuthor = "select id, bookname, author, language, publisher, year, volume, isbn, createddate, modifieddate from Books b where b.author like %||:author||%";
+/*	public Library getBooksByAuthor(String author) {
+		String sqlBooksByAuthor = "select id, bookname, author, language, publisher, year, volume, isbn, createddate, modifieddate from Books b where b.author like %||:author||%";
 		Query selectBooksByAuthor = entityManager.createNativeQuery(sqlBooksByAuthor, BookModel.class).setParameter("author", author);
 		List<BookModel> resultList = selectBooksByAuthor.getResultList();
-		return resultList;*/
+		return resultList;
 		
-		return bookRepository.findByAuthorIgnoreCaseContaining(author);
+		//return bookRepository.findByAuthorIgnoreCaseContaining(author);
 		
-	}
+		author = '%'+author+'%';
+		return myBatisHandle.QueryParamSearch(AUTHOR, author);
+		
+	}*/
 	
-	public List<BookModel> getBooksByName(String bookName) {
+/*	public Library getBooksByName(String bookName) {
 		
-		return bookRepository.findByNameIgnoreCaseContaining(bookName);
-		
-	}
+		//return bookRepository.findByNameIgnoreCaseContaining(bookName);
+		bookName = '%'+bookName+'%';
+		return myBatisHandle.QueryParamSearch(BOOKNAME, bookName);
+	}*/
 	
-	public String updateBookDetails(BookModel updateBookDetail) {
+/*	public String updateBookDetails(BookModel updateBookDetail) {
 		
 		if(null != updateBookDetail) {
 			updateBookDetail.setCreatedDate(new Date());
@@ -87,17 +104,17 @@ public class BookService {
 		{
 			return "Error";
 		}
-	}
+	}*/
 
 	
-	public BookModel getBookById(int bookId) {
+	/*public BookModel getBookById(int bookId) {
 		
 		 Optional<BookModel> bookDetails = bookRepository.findById(bookId);
 		 return bookDetails.get();
-	}
+	}*/
 		
 	
-	public int addBooksToLibrary(BookModel bookToAdd) {
+/*	public int addBooksToLibrary(BookModel bookToAdd) {
 		int bookId = this.nextBookId();
 		int attributeId=1;
 		bookToAdd.setBookId(bookId);
@@ -112,17 +129,27 @@ public class BookService {
 		}
 		bookToAdd.setCreatedDate(new Date());
 		bookToAdd.setModifiedDate(new Date());
-		bookRepository.save(bookToAdd);
+		//bookRepository.save(bookToAdd);
+		myBatisHandle.AddBookToLibrary(bookToAdd);
+		
 		return bookId;
-	}
+	}*/
 
-	private int nextBookId() {
+	/*private int nextBookId() {
 		return (this.getAllBooks().size() + 1);
-	}
+	}*/
 	
 	public BookSimplifiedModel testMyBatis(int bookId) {
 		//return myBatisHandle.selectOne(bookId);
-		return myBatisHandle.BookWithGenre(bookId);
+		BookSimplifiedModel bookWithGenre = myBatisHandle.BookWithGenre(bookId);
+		if(bookWithGenre != null & bookWithGenre.getIsbn() != null) {
+			// invoke GoodReads and get description and rating
+			GoodReadsBookDetails goodBookDetailsUsingIsbn = goodBooksClientHandle.getGoodBookDetailsUsingIsbn(bookWithGenre.getIsbn());
+			if (goodBookDetailsUsingIsbn != null) {
+				bookWithGenre.setBookRating(Float.valueOf(goodBookDetailsUsingIsbn.getGoodReadsResponse().getBook().getRating()));
+			}
+		}
+		return bookWithGenre;
 	}
 	
 }
