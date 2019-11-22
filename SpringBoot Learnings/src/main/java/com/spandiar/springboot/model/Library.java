@@ -2,8 +2,10 @@ package com.spandiar.springboot.model;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@XmlRootElement
 public class Library {
 	@JsonIgnore
 	private String library;

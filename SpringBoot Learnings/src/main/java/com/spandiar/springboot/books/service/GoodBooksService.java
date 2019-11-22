@@ -1,7 +1,10 @@
 package com.spandiar.springboot.books.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.spandiar.springboot.model.GoodReadsBookDetails;
@@ -17,17 +20,25 @@ public class GoodBooksService {
 	private RestTemplate restTemplate;
 
 	public GoodBooksService() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public GoodReadsBookDetails getGoodBookDetailsUsingIsbn(String isbn) {
-		
+		ResponseEntity<GoodReadsBookDetails> responseEntity;
+		GoodReadsBookDetails response;
 		String url = URL + isbn + "?" + "key=" + GOODREADSKEY + "&" + "format=" + GOODREADSFORMAT;
-		System.out.println("GoodBooks URL is: " + url);
-		//String forStringObject = restTemplate.getForObject(url, String.class);
-		//System.out.println("Response from GoodReads is: " + forStringObject);
-		GoodReadsBookDetails forObject = restTemplate.getForObject(url, GoodReadsBookDetails.class);
-		return forObject;
+		//System.out.println("GoodBooks URL is: " + url);
+		try {
+			responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, GoodReadsBookDetails.class);
+			if(responseEntity.getStatusCode().is2xxSuccessful()) {
+				response = responseEntity.getBody();
+			} else
+				response = null;
+		} catch(RestClientException ex) {
+			ex.printStackTrace();
+			response = null;
+		}
+		return response;
 	}
 
 }

@@ -2,6 +2,8 @@ package com.spandiar.springboot.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class BookSimplifiedModel {
 	
 	private int bookId;
@@ -75,8 +77,6 @@ public class BookSimplifiedModel {
 	public void setVolume(int volume) {
 		this.volume = volume;
 	}
-	
-	
 
 	public String getIsbn() {
 		return isbn;
@@ -109,17 +109,27 @@ public class BookSimplifiedModel {
 	public void setBookAttributes(List<BookAttributesSimplified> bookAttributes) {
 		this.bookAttributes = bookAttributes;
 	}
-
+	
 	public static class BookAttributesSimplified {
 		
+		@JsonIgnore
+		private int bookId;
 		private int attributeId;
 		private String bookGenre;
+		
 
 		public BookAttributesSimplified() {
 			
-		}
-	
+		}	
 		
+		public int getBookId() {
+			return bookId;
+		}
+
+		public void setBookId(int bookId) {
+			this.bookId = bookId;
+		}
+
 		public int getAttributeId() {
 			return attributeId;
 		}

@@ -17,8 +17,8 @@ public interface BookMapper {
 Library selectOne(int bookId);*/
 
 BookSimplifiedModel BookWithGenre(int bookId);
-//void AddBookToLibrary(BookModel addBook);
-//Library QueryParamSearch(@Param("columnName") String columnName, @Param("columnValue") String columnValue);
+int AddBookToLibrary(BookSimplifiedModel addBook);
+Library QueryParamSearch(@Param("columnName") String columnName, @Param("columnValue") String columnValue);
 Library AllBooks();
-
+int getNextBookId();
 }
