@@ -1,5 +1,7 @@
 package com.spandiar.springboot.model;
 
+import java.util.List;
+
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,7 +38,88 @@ public class GoodReadsBookDetails {
 			private String description;
 			@XmlElement(name="average_rating")
 			private String rating;
+			@XmlElement(name="publisher")
+			private String publisher;
+			@XmlElement(name="language_code")
+			private String language;
+			@XmlElement(name="authors")
+			private AuthorDetails authorDetails;
 			
+			@JsonIgnoreProperties(ignoreUnknown=true)
+			@XmlAccessorType(XmlAccessType.FIELD)
+			private static class AuthorDetails {
+				
+				@XmlElement(name="author")
+				private List<Author> author;
+				
+				@JsonIgnoreProperties(ignoreUnknown=true)
+				@XmlAccessorType(XmlAccessType.FIELD)
+				private static class Author {
+					
+					@XmlElement(name="name")
+					private String authorName;
+
+					public String getAuthorName() {
+						return authorName;
+					}
+
+					public void setAuthorName(String authorName) {
+						this.authorName = authorName;
+					}
+
+					public Author() {
+						super();
+						// TODO Auto-generated constructor stub
+					}
+					
+				}
+
+				public List<Author> getAuthor() {
+					return author;
+				}
+
+				public void setAuthor(List<Author> author) {
+					this.author = author;
+				}
+
+				public AuthorDetails() {
+					super();
+					// TODO Auto-generated constructor stub
+				}		
+				
+			}
+			
+			
+			public String getPublisher() {
+				return publisher;
+			}
+
+
+			public void setPublisher(String publisher) {
+				this.publisher = publisher;
+			}
+			
+
+			public String getLanguage() {
+				return language;
+			}
+
+
+			public void setLanguage(String language) {
+				this.language = language;
+			}
+
+
+			public AuthorDetails getAuthorDetails() {
+				return authorDetails;
+			}
+
+
+			public void setAuthorDetails(AuthorDetails authorDetails) {
+				this.authorDetails = authorDetails;
+			}
+
+
 			public GoodReadsBook() {
 				super();
 				// TODO Auto-generated constructor stub
@@ -96,6 +179,8 @@ public class GoodReadsBookDetails {
 			
 		}
 	
+	
+	
 	public GoodReadsBookDetails() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -115,6 +200,14 @@ public class GoodReadsBookDetails {
 
 	public void setBook(GoodReadsBook book) {
 		this.book = book;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "GoodReadsBookDetails [Id=" + Id + ", book=" + book + ", getId()=" + getId() + ", getBook()=" + getBook()
+				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
+				+ "]";
 	}
 	
 }

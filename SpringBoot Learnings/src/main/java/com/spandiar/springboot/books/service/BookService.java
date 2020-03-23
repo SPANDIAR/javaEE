@@ -33,6 +33,7 @@ public class BookService {
 	Logger logger = LoggerFactory.getLogger(BookService.class);
 	
 	private List<BookModel> allBooks;
+	private GoodReadsBookDetails goodBookDetailsUsingIsbn;
 /*	@Autowired
 	private bookRepository bookRepository;
 	@PersistenceContext
@@ -47,9 +48,23 @@ public class BookService {
 	private MongoTemplate mongoTemplateDBHandle;
 	
 	
+	public GoodReadsBookDetails getGoodBookDetailsUsingIsbn() {
+		return goodBookDetailsUsingIsbn;
+	}
+
+
+
+	public void setGoodBookDetailsUsingIsbn(GoodReadsBookDetails goodBookDetailsUsingIsbn) {
+		this.goodBookDetailsUsingIsbn = goodBookDetailsUsingIsbn;
+	}
+
+
+
 	public BookService() {
 		
 	}
+	
+	
 
 	public Library getAllBooks() {
 		/* Iterator<BookModel> bookIterator = bookRepository.findAll().iterator();
@@ -156,22 +171,14 @@ public class BookService {
 	public BookSimplifiedModel getBookFromRepository(int bookId) {
 		//return myBatisHandle.selectOne(bookId);
 		BookSimplifiedModel bookWithGenre = myBatisHandle.BookWithGenre(bookId);
-		GoodReadsBookDetails goodBookDetailsUsingIsbn;
+		
 		
 		if (bookWithGenre == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
 		} else if (bookWithGenre != null & bookWithGenre.getIsbn() != null) {
 			// check local mongo cache if book details exist
 			try {
-				logger.info("Size of the GoodReads collection in mongo is " + mongoTemplateDBHandle.getCollection(GOODREADS).countDocuments());
-				
-				String formattedIsbn = StringUtils.delete(bookWithGenre.getIsbn(), "-");
-				Criteria criteria1 = new Criteria().where("book.isbn").is(formattedIsbn);
-				Criteria criteria2 = new Criteria().where("book.isbn13").is(formattedIsbn);
-				Criteria orCondition = new Criteria().orOperator(criteria1, criteria2);
-				Query query = new Query().addCriteria(orCondition);
-				
-				goodBookDetailsUsingIsbn = mongoTemplateDBHandle.findOne(query, GoodReadsBookDetails.class);
+				checkMongoCache(bookWithGenre);
 				
 			} catch (Exception e) {
 				goodBookDetailsUsingIsbn = null;
@@ -182,18 +189,37 @@ public class BookService {
 				bookWithGenre.setBookRating(Float.valueOf(goodBookDetailsUsingIsbn.getBook().getRating()));
 				bookWithGenre.setBookSnippet(goodBookDetailsUsingIsbn.getBook().getDescription());
 			} else {
-				// invoke GoodReads and get description and rating
-				goodBookDetailsUsingIsbn = goodBooksClientHandle
-						.getGoodBookDetailsUsingIsbn(bookWithGenre.getIsbn());
-				if (goodBookDetailsUsingIsbn != null) {
-					logger.info("External service invoked to fetch additional details");
-					logger.info(goodBookDetailsUsingIsbn.toString());
-					mongoTemplateDBHandle.save(goodBookDetailsUsingIsbn);
-					bookWithGenre.setBookRating(Float.valueOf(goodBookDetailsUsingIsbn.getBook().getRating()));
-					bookWithGenre.setBookSnippet(goodBookDetailsUsingIsbn.getBook().getDescription());
-				}
+				invokeGoodReadsClient(bookWithGenre);
 			}
 		}
+		logger.info("Message returned " + bookWithGenre.toString());
 		return bookWithGenre;
+	}
+
+	public void invokeGoodReadsClient(BookSimplifiedModel bookWithGenre) {
+		//GoodReadsBookDetails goodBookDetailsUsingIsbn;
+		// invoke GoodReads and get description and rating
+		goodBookDetailsUsingIsbn = goodBooksClientHandle
+				.getGoodBookDetailsUsingIsbn(bookWithGenre.getIsbn());
+		if (goodBookDetailsUsingIsbn != null) {
+			logger.info("External service invoked to fetch additional details");
+			logger.info(goodBookDetailsUsingIsbn.toString());
+			mongoTemplateDBHandle.save(goodBookDetailsUsingIsbn);
+			bookWithGenre.setBookRating(Float.valueOf(goodBookDetailsUsingIsbn.getBook().getRating()));
+			bookWithGenre.setBookSnippet(goodBookDetailsUsingIsbn.getBook().getDescription());
+		}
+	}
+
+	public void checkMongoCache(BookSimplifiedModel bookWithGenre) {
+		
+		logger.info("Size of the GoodReads collection in mongo is " + mongoTemplateDBHandle.getCollection(GOODREADS).countDocuments());
+		
+		String formattedIsbn = StringUtils.delete(bookWithGenre.getIsbn(), "-");
+		Criteria criteria1 = new Criteria().where("book.isbn").is(formattedIsbn);
+		Criteria criteria2 = new Criteria().where("book.isbn13").is(formattedIsbn);
+		Criteria orCondition = new Criteria().orOperator(criteria1, criteria2);
+		Query query = new Query().addCriteria(orCondition);
+		
+		goodBookDetailsUsingIsbn = mongoTemplateDBHandle.findOne(query, GoodReadsBookDetails.class);
 	}
 }

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spandiar.springboot.books.mybatis.BookMapper">
+
+<sql id="bookIdSequence">
+select nextval ('bookIdSequence')
+</sql>
+
+
+<!-- <sql id="bookAttributesInsert">
+INSERT INTO BOOK_ATTRIBUTES 
+(BOOKID, ATTRIBUTEID, GENRE, CREATEDDATE, MODIFIEDDATE) 
+VALUES 
+(#{bookId}, #{bookAttribute.attributeId}, #{bookAttribute.bookGenre}, now(), now())
+</sql> -->
+
+<sql id="BooksInsertColumns">
+(BOOKID, BOOKNAME, AUTHOR, LANGUAGE, PUBLISHER, YEAR, VOLUME, ISBN, CREATEDDATE, MODIFIEDDATE) 
+</sql>
+
+ <sql id="BooksInsertValues">
+(#{bookId}, #{bookName}, #{author}, #{language}, #{publisher}, #{year}, #{volume}, #{isbn}, now(), now());
+</sql>
+
+<sql id="BooksAttributesInsertColumns"> 
+(BOOKID, ATTRIBUTEID, GENRE, CREATEDDATE, MODIFIEDDATE)
+</sql>
+
+<sql id="BookAttributeInsertValues">
+(#{bookId}, #{bookAttribute.attributeId}, #{bookAttribute.bookGenre}, now(), now())
+</sql>
+
+<sql id="BookModelOutputQuery">
+A.BOOKID as bookId, A.BOOKNAME as bookName, A.AUTHOR as author, A.LANGUAGE as language, B.ATTRIBUTEID as attributeId, B.GENRE as genre, A.PUBLISHER as publisher, A.YEAR as year, A.VOLUME as volume, A.ISBN as isbn FROM BOOKS A LEFT OUTER JOIN BOOK_ATTRIBUTES B ON (B.BOOKID=A.BOOKID)
+</sql>
+
+<resultMap type="com.spandiar.springboot.model.Library" id="getAllBooks">
+ <result column="library" property="library"/>
+ <collection property="libraryBooks" javaType="ArrayList" ofType="com.spandiar.springboot.model.BookSimplifiedModel" resultMap="bookSimplified"/>
+</resultMap>
+
+    <resultMap type="com.spandiar.springboot.model.BookSimplifiedModel" id="bookSimplified">
+        <result column="bookId" property="bookId"/>
+        <result column="bookName" property="bookName"/>
+        <result column="author" property="author"/>
+        <result column="language" property="language"/>
+        <result column="publisher" property="publisher"/>
+        <result column="year" property="year"/>
+        <result column="volume" property="volume"/>
+        <result column="isbn" property="isbn"/>
+        <collection property="bookAttributes" javaType="ArrayList" ofType="com.spandiar.springboot.model.BookSimplifiedModel$BookAttributesSimplified" resultMap="bookAttributes"/>
+    </resultMap>
+    
+     <resultMap type="com.spandiar.springboot.model.BookSimplifiedModel$BookAttributesSimplified" id="bookAttributes">
+        <result column="attributeId" property="attributeId"/>
+        <result column="genre" property="bookGenre"/>
+    </resultMap>
+    
+<select id="getNextBookId" resultType="int">
+	<include refid="bookIdSequence"/>
+</select>
+    
+      <select id="AllBooks" fetchSize="10" resultMap="getAllBooks">
+    SELECT 'library' as library,
+<include refid="BookModelOutputQuery"/>
+ORDER BY A.BOOKID
+</select>
+
+    <select id="BookWithGenre" parameterType="int" resultMap="bookSimplified" statementType="PREPARED">
+SELECT  
+<include refid="BookModelOutputQuery"/>
+ WHERE A.BOOKID=#{bookId}
+</select>
+    
+    <select id="QueryParamSearch" resultMap="getAllBooks">
+    SELECT 'library' as library,
+<include refid="BookModelOutputQuery"/>
+WHERE lower(${columnName}) like lower(#{columnValue})
+</select>
+
+<insert id="AddBookToLibrary" parameterType="com.spandiar.springboot.model.BookSimplifiedModel">
+<selectKey keyProperty="bookId" resultType="Integer" order="BEFORE"> 
+	<include refid="bookIdSequence"/>
+</selectKey>
+    	INSERT INTO BOOKS 
+        <include refid="BooksInsertColumns"/>
+    VALUES 
+        <include refid="BooksInsertValues"/>
+	        <if test="bookAttributes != null and bookAttributes.size() > 0">
+	        	  INSERT INTO BOOK_ATTRIBUTES
+	        	  		<include refid="BooksAttributesInsertColumns"/>
+	        	  			VALUES
+			        <foreach collection="bookAttributes" item="bookAttribute" separator=",">			  
+						 			<include refid="BookAttributeInsertValues"/>
+				</foreach>
+			</if>
+</insert>
+</mapper>

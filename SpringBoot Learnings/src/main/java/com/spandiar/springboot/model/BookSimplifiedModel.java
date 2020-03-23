@@ -3,7 +3,10 @@ package com.spandiar.springboot.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(content = Include.NON_NULL)
 public class BookSimplifiedModel {
 	
 	private int bookId;
@@ -148,6 +151,14 @@ public class BookSimplifiedModel {
 			this.bookGenre = bookGenre;
 		}
 		
+	}
+
+	@Override
+	public String toString() {
+		return "BookSimplifiedModel [bookId=" + bookId + ", bookName=" + bookName + ", author=" + author + ", language="
+				+ language + ", publisher=" + publisher + ", year=" + year + ", volume=" + volume + ", isbn=" + isbn
+				+ ", bookSnippet=" + bookSnippet + ", bookRating=" + bookRating + ", bookAttributes=" + bookAttributes
+				+ "]";
 	}
 	
 }

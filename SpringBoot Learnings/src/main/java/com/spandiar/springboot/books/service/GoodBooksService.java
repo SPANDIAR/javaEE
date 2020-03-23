@@ -24,21 +24,24 @@ public class GoodBooksService {
 	}
 	
 	public GoodReadsBookDetails getGoodBookDetailsUsingIsbn(String isbn) {
-		ResponseEntity<GoodReadsBookDetails> responseEntity;
-		GoodReadsBookDetails response;
-		String url = URL + isbn + "?" + "key=" + GOODREADSKEY + "&" + "format=" + GOODREADSFORMAT;
-		//System.out.println("GoodBooks URL is: " + url);
-		try {
-			responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, GoodReadsBookDetails.class);
-			if(responseEntity.getStatusCode().is2xxSuccessful()) {
-				response = responseEntity.getBody();
-			} else
+		
+		GoodReadsBookDetails response = new GoodReadsBookDetails();
+		
+		if(!(null==isbn) && !(isbn.isEmpty())) {
+			
+			ResponseEntity<GoodReadsBookDetails> responseEntity;
+			String url = URL + isbn + "?" + "key=" + GOODREADSKEY + "&" + "format=" + GOODREADSFORMAT;
+			try {
+				responseEntity = restTemplate.exchange(url, HttpMethod.GET, null, GoodReadsBookDetails.class);
+				if(responseEntity.getStatusCode().is2xxSuccessful()) {
+					response = responseEntity.getBody();
+				} else
+					response = null;
+			} catch(RestClientException ex) {
+				ex.printStackTrace();
 				response = null;
-		} catch(RestClientException ex) {
-			ex.printStackTrace();
-			response = null;
+			}
 		}
 		return response;
 	}
-
 }
